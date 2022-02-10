@@ -1,0 +1,18 @@
+stages:
+- stage: Preview
+  jobs: 
+  - job: PreviewAzureChanges
+    displayName: Preview Azure changes
+    steps:
+      - task: AzureCLI@2
+        name: RunWhatIf
+        displayName: Run what-if
+        inputs:
+          azureSubscription: $(ServiceConnectionName)
+          scriptType: 'bash'
+          scriptLocation: 'inlineScript'
+          inlineScript: |
+            az deployment group what-if \
+              --resource-group $(ResourceGroupName) \
+              --template-file deploy/main.bicep \
+              --parameters environmentType=$(EnvironmentType)
